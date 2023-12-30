@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#app {
+    background: #181818;
+    min-height: 100vh;
+}
+
+
+.bg-gray {
+    background-color: #282828;
+}
+
+input[type="checkbox"] {
+    accent-color: #e50914;
+}
+
+
+.rounded-1 {
+    border-radius: 1rem;
+}
+
+.rounded-bottom-1 {
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+.bg-red {
+    background-color: #e50914;
+}
+
+.color-soft-gray {
+    color: #8c8c8c;
+}
+
+
+.color-white {
+    color: #f5f5f1;
+}
+
+.color-gray {
+    color: #8c8c8c;
+}
+
+.color-red {
+    color: #e50914;
+}
+
+
+.link {
+    @extend .color-white;
+    transition: .3s;
+
+    &:hover {
+        @extend .color-red;
+    }
+}
+
+.action-button {
+    @extend .color-white;
+    background: #e50914;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: .3s;
+
+    &:hover {
+        background: #B81D24;
+    }
+}
+
+#player_playlist1 > pjsdiv > [me=head_x-0] {
+    background-color: rgb(219, 0, 0.9);
+    color: #fff !important;
+
+    line {
+        stroke: #fff !important;
+    }
+}
+
+#player > pjsdiv > pjsdiv > svg > path {
+    display: none !important;
+}
+
+#oframeplayer {
+    border-radius: 5px;
+}
+
+.breaker {
+    height: 2px;
+    opacity: .4;
+    background: #8c8c8c;
+}
+
+.input {
+    @extend .rounded-1;
+    @extend .bg-gray;
+    @extend .color-white;
+    padding: 10px 20px;
+    transition: .3s;
+    width: 100%;
+
+    input[type=text] {
+        background: none;
+        width: 100%;
+
+        &::placeholder {
+            @extend .color-soft-gray;
+        }
+
+        &:focus {
+            outline: none;
+        }
+    }
+}
+
+
+.dropdown-item {
+    @extend .bg-gray;
+    @extend .color-soft-gray;
+    padding: 10px 20px;
+    transition: .3s;
+    width: 100%;
+}
+
+.dropdown-button {
+    @extend .dropdown-item;
+    @extend .rounded-1;
+}
+
+.dropdown-button[data-headlessui-state="open"] {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.dropdown-items {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+
+

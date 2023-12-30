@@ -12,5 +12,8 @@ COPY . .
 
 RUN npm run build
 
+COPY ./docker/start.sh /start.sh
+
 EXPOSE 8080
-CMD [ "http-server", "dist" ]
+
+CMD ["/start.sh"]

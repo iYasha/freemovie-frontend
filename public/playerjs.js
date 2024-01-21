@@ -3,7 +3,14 @@
 //	API - https://playerjs.com/docs/q=api
 
 
-function getStreamUrl(rezka_movie_id, rezka_audio_id, host, authToken) {
+function mapQualityStream(streams) {
+    return streams.map((stream) => {
+        return '[' + stream.quality + ']' + stream.streams.hls;
+    }).join(',');
+}
+
+
+function getStreamUrl(rezka_movie_id, rezka_audio_id, host, authToken, movie_type, season= 1, episode= 1, return_data=false) {
     function getStreamResponse(request_data) {
         try {
             const xhr = new XMLHttpRequest();
@@ -28,26 +35,25 @@ function getStreamUrl(rezka_movie_id, rezka_audio_id, host, authToken) {
     }
 
     function getStreamUrls(cdn_response) {
-        const requestUrl = host + '/api/v1/movies/film/stream/parse/';
+        const requestUrl = host + '/api/v1/movies/' + movie_type + '/stream/parse/';
         try {
             const xhr = new XMLHttpRequest();
             xhr.open('POST', requestUrl, false);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('X-API-KEY', authToken);
             xhr.send(JSON.stringify(cdn_response));
-            return JSON.parse(xhr.responseText).data.streams;
+            return JSON.parse(xhr.responseText).data;
         } catch (error) {
             console.error('Error fetching movies:', error);
         }
     }
 
-    const requestUrl =
-        host +
-        '/api/v1/movies/film/' +
-        rezka_movie_id +
-        '/audio/' +
-        rezka_audio_id +
-        '/stream/request';
+    let requestUrl = host + '/api/v1/movies/' + movie_type + '/' + rezka_movie_id + '/audio/' + rezka_audio_id;
+    if (movie_type === 'series') {
+        requestUrl += '/season/' + season + '/episode/' + episode;
+    }
+    requestUrl += '/stream/request'
+
     try {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', requestUrl, false);
@@ -56,10 +62,11 @@ function getStreamUrl(rezka_movie_id, rezka_audio_id, host, authToken) {
         xhr.send();
         const response = JSON.parse(xhr.responseText);
         const stream_response = getStreamResponse(response.data);
-        const streams = getStreamUrls(stream_response);
-        return streams.map((stream) => {
-            return '[' + stream.quality + ']' + stream.streams.hls;
-        }).join(',');
+        const parsed_data = getStreamUrls(stream_response);
+        if (return_data === true) {
+            return parsed_data;
+        }
+        return mapQualityStream(parsed_data.streams);
     } catch (error) {
         console.error('Error fetching movies:', error);
     }

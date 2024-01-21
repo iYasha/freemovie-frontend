@@ -29,6 +29,6 @@ jobs:
             push: ${{ github.event_name != 'pull_request' }}
             tags: ${{ secrets.DOCKERHUB_USERNAME }}/freemovie_frontend:${{ github.ref_name }},${{ secrets.DOCKERHUB_USERNAME }}/freemovie_frontend:latest
             env:
-              VITE_API_URL: VITE_API_URL_PLACEHOLDER
-              VITE_AUTH_TOKEN: VITE_AUTH_TOKEN_PLACEHOLDER
+              VITE_API_URL: "VITE_API_URL_PLACEHOLDER"
+              VITE_AUTH_TOKEN: "VITE_AUTH_TOKEN_PLACEHOLDER"
 

@@ -8,10 +8,6 @@
 }
 
 
-.bg-gray {
-    background-color: #282828;
-}
-
 input[type="checkbox"] {
     accent-color: #e50914;
 }
@@ -26,12 +22,25 @@ input[type="checkbox"] {
     border-bottom-right-radius: 1rem;
 }
 
+
+.bg-dark {
+    background: #181818;
+}
+
+.bg-gray {
+    background-color: #282828;
+}
+
 .bg-red {
     background-color: #e50914;
 }
 
 .color-soft-gray {
-    color: #8c8c8c;
+    color: #a0a0a0;
+}
+
+.color-orange {
+    color: #f39c12;
 }
 
 
@@ -136,6 +145,15 @@ input[type="checkbox"] {
 .dropdown-items {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+}
+
+.badge {
+    transition: .3s;
+}
+
+.badge-favorite:hover {
+    @extend .color-red;
+    color: red;
 }
 
 

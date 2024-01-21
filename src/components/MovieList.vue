@@ -55,11 +55,7 @@
           <h1>Movies not found</h1>
         </div>
         <div v-else v-for="movie in movies" :key="movie.id" class="col-span-1 mt-5">
-          <router-link :to="'/movie/' + movie.id">
-            <div :style="{ backgroundImage: 'url(' + movie.poster_url + ')' }" class="h-60 bg-cover bg-center"></div>
-            <div class="color-red font-medium mt-2 text-sm">{{ movie.short_description }}</div>
-            <div class="color-white font-semibold text-base">{{ movie.title }}</div>
-          </router-link>
+          <MovieCard class="h-72" :movie="movie"/>
         </div>
       </div>
 
@@ -75,12 +71,13 @@
 import axios from 'axios';
 import MovieMenuDropdown from './MovieMenuDropdown.vue';
 import Dropdown from "@/components/Dropdown.vue";
+import MovieCard from "@/components/MovieCard.vue";
 
 export default {
   components: {
+    MovieCard,
     Dropdown,
     MovieMenuDropdown,
-
   },
   props: {
     movieType: {

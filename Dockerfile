@@ -1,17 +1,12 @@
-FROM node:16.17.0
-
-RUN npm install -g http-server
-
+FROM node:16.17.0 as build-stage
 WORKDIR /app
-
 COPY package*.json ./
-
 RUN npm install
+COPY ./ .
+RUN npm run build
 
-COPY . .
-
-RUN chmod +x start.sh
-
+FROM nginx as production-stage
 EXPOSE 8080
-
-CMD ["sh", "-c", "/app/start.sh"]
+RUN mkdir /app
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build-stage /app/dist /app

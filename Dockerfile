@@ -13,4 +13,4 @@ COPY --from=build-stage /app/dist /app
 
 # To set environment variables after the container is built
 COPY ./substitute_environment_variables.sh /docker-entrypoint.d/substitute_environment_variables.sh
-RUN chmod +x /substitute_environment_variables.sh
+RUN chmod +x /docker-entrypoint.d/substitute_environment_variables.sh

@@ -1,48 +1,58 @@
 <template>
   <div class="rounded-1">
-    <router-link :to="'/movie/' + movie.id">
+    <router-link :to="loading ? '' : '/movie/' + movie.id">
       <div class="movie-card h-full bg-cover bg-center p-3 flex flex-col justify-between rounded-1">
 
         <div
             class="card-image rounded-1"
+            :class="{ 'skeleton': loading }"
             :style="{ backgroundImage: 'linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,212,255,0) 60%), url(' + movie.poster_url + ')' }"
         ></div>
 
-        <div class="flex" :class="{ 'justify-between': movie.imdb_rating || movie.release_date, 'justify-end': !movie.imdb_rating && !movie.release_date }">
-          <div v-if="movie.imdb_rating"
-               class="w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center">
+        <div class="flex"
+             :class="{
+          'justify-between': movie.imdb_rating || movie.release_date || loading,
+          'justify-end': !movie.imdb_rating && !movie.release_date,
+          'skeleton-wrapper': loading,
+        }">
+          <div v-if="movie.imdb_rating || loading"
+               class="skeleton-content-hide w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center">
             <font-awesome-icon class="mr-1 h-4 w-4 color-orange" icon="fa-solid fa-star"/>
-            {{ movie.imdb_rating }}
+            <span>{{ round_rating(movie.imdb_rating) }}</span>
           </div>
-          <div v-if="movie.release_date"
-              class="w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center">
-            {{ format_date(movie.release_date) }}
+          <div v-if="movie.release_date || loading"
+               class="skeleton-content-hide w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center">
+            <span>{{ format_date(movie.release_date) }}</span>
           </div>
           <button
               @click.prevent="console.log('add to favorites')"
-              class="badge badge-favorite cursor-pointer w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center">
+              class="badge skeleton-content-hide badge-favorite cursor-pointer w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center">
             <font-awesome-icon class="h-4 w-4" icon="fa-solid fa-plus"/>
           </button>
 
         </div>
 
         <div class="mb-3">
-<!--          <div class="flex mb-4">-->
-<!--            <div v-if="movie.imdb_rating"-->
-<!--                 class="w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center mr-2">-->
-<!--              <font-awesome-icon class="mr-1 h-4 w-4 color-orange" icon="fa-solid fa-star"/>-->
-<!--              {{ movie.imdb_rating }}-->
-<!--            </div>-->
-<!--            <div-->
-<!--                class="w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-centerd">-->
-<!--              {{ format_date(movie.release_date) }}-->
-<!--            </div>-->
-<!--          </div>-->
+          <!--          <div class="flex mb-4">-->
+          <!--            <div v-if="movie.imdb_rating"-->
+          <!--                 class="w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center mr-2">-->
+          <!--              <font-awesome-icon class="mr-1 h-4 w-4 color-orange" icon="fa-solid fa-star"/>-->
+          <!--              {{ movie.imdb_rating }}-->
+          <!--            </div>-->
+          <!--            <div-->
+          <!--                class="w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-centerd">-->
+          <!--              {{ format_date(movie.release_date) }}-->
+          <!--            </div>-->
+          <!--          </div>-->
+          <div :class="{'skeleton-wrapper': loading}">
+            <div class="skeleton-content-hide color-white font-semibold text-lg text-center w-full flex justify-center items-center">
+              <span>{{ movie.title }}</span>
+            </div>
+          </div>
 
-          <div class="color-white font-semibold text-lg text-center w-full flex justify-center items-center">{{ movie.title }}</div>
-          <div class="card-hidden">
+          <div class="card-hidden" v-if="!loading">
 
-          <div class="color-white mt-2 text-center">{{ movie.short_description }}</div>
+            <div class="color-white mt-2 text-center">{{ movie.short_description }}</div>
           </div>
         </div>
 
@@ -59,21 +69,63 @@ export default {
   components: {},
   props: {
     movie: Object,
+    loading: Boolean,
   },
   data() {
     return {}
   },
   methods: {
+    round_rating(value) {
+      if (value) {
+       return value.toFixed(1)
+      }
+      return 0.0;
+    },
     format_date(value) {
       if (value) {
         return moment(String(value)).format('YYYY')
       }
+      return '0000';
     },
   }
 }
 </script>
 
 <style scoped>
+
+.skeleton {
+  background: #222222 !important;
+  animation: skeleton-loading 1.5s linear infinite;
+}
+
+.skeleton-wrapper > * {
+  background: #323232 !important;
+  border-radius: 0;
+  position: relative;
+}
+
+@keyframes skeleton-loading {
+  to {
+    background-position: left;
+  }
+}
+
+.skeleton-wrapper > *::before {
+  background: linear-gradient(90deg, #323232 40%, #404040, #323232 60%) right / 300% 100%;
+  animation: skeleton-loading 1.5s linear infinite;
+
+  position: absolute;
+  content: '';
+  z-index: 2;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.skeleton-wrapper .skeleton-content-hide > * {
+  opacity: 0;
+}
 
 .card-image {
   width: 100%;
@@ -93,6 +145,10 @@ export default {
   z-index: 1;
   transition: .3s;
   overflow: hidden;
+}
+
+.movie-card:hover .card-image.skeleton {
+  filter: none !important;
 }
 
 .movie-card:hover .card-image {

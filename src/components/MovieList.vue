@@ -51,11 +51,14 @@
         </div>
       </div>
       <div class="grid grid-cols-4 2xl:grid-cols-8 gap-6">
-        <div v-if="movies.length === 0" class="col-span-4 mt-5 color-white text-2xl">
+        <div v-if="loadingMovie" v-for="index in results_per_page" :key="index" class="col-span-1 mt-5">
+          <MovieCard class="h-72" :loading="loadingMovie" :movie="skeletonMovie" />
+        </div>
+        <div v-else-if="movies.length === 0" class="col-span-4 mt-5 color-white text-2xl">
           <h1>Movies not found</h1>
         </div>
         <div v-else v-for="movie in movies" :key="movie.id" class="col-span-1 mt-5">
-          <MovieCard class="h-72" :movie="movie"/>
+          <MovieCard class="h-72" :loading="loadingMovie" :movie="movie" />
         </div>
       </div>
 
@@ -87,6 +90,14 @@ export default {
   },
   data() {
     return {
+      loadingMovie: false,
+      skeletonMovie: {
+        id: null,
+        poster_url: null,
+        imdb_rating: null,
+        release_date: null,
+        title: '.',
+      },
       sorting_fields: {
         0: '',
         1: '-release_date',
@@ -166,6 +177,9 @@ export default {
     },
     async fetchMovies(page) {
       try {
+        if (page === 1) {
+          this.loadingMovie = true;
+        }
         const ganre_ids = this.genres.filter((item) => item.isEnabled === true).map((item) => item.id).join(',');
         const url = import.meta.env.VITE_API_URL + '/api/v1/movies/';
         const authToken = import.meta.env.VITE_AUTH_TOKEN; // Replace with your actual authentication token
@@ -205,6 +219,7 @@ export default {
         this.movies_info.total_count = response_data.total_count;
         this.movies_info.page_count = response_data.page_count;
         this.movies_info.next = response_data.next;
+        this.loadingMovie = false;
       } catch (error) {
         console.error('Error fetching movies:', error);
       }

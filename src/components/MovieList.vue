@@ -50,7 +50,7 @@
           <Dropdown @selected="setSortBy" :items="sorting_options"/>
         </div>
       </div>
-      <div class="grid grid-cols-4 2xl:grid-cols-8 gap-6">
+      <div class="grid grid-cols-4 2xl:grid-cols-7 gap-6">
         <div v-if="loadingMovie" v-for="index in results_per_page" :key="index" class="col-span-1 mt-5">
           <MovieCard class="h-72" :loading="loadingMovie" :movie="skeletonMovie" />
         </div>

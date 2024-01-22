@@ -1,7 +1,7 @@
 <template>
   <div class="rounded-1">
     <router-link :to="loading ? '' : '/movie/' + movie.id">
-      <div class="movie-card h-full bg-cover bg-center p-3 flex flex-col justify-between rounded-1">
+      <div class="movie-card h-full bg-cover bg-center p-3 flex flex-col justify-between rounded-1" @mouseover="hovered=true" @mouseleave="hovered=false">
 
         <div
             class="card-image rounded-1"
@@ -33,19 +33,8 @@
         </div>
 
         <div class="mb-3">
-          <!--          <div class="flex mb-4">-->
-          <!--            <div v-if="movie.imdb_rating"-->
-          <!--                 class="w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center mr-2">-->
-          <!--              <font-awesome-icon class="mr-1 h-4 w-4 color-orange" icon="fa-solid fa-star"/>-->
-          <!--              {{ movie.imdb_rating }}-->
-          <!--            </div>-->
-          <!--            <div-->
-          <!--                class="w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-centerd">-->
-          <!--              {{ format_date(movie.release_date) }}-->
-          <!--            </div>-->
-          <!--          </div>-->
           <div :class="{'skeleton-wrapper': loading}">
-            <div class="skeleton-content-hide color-white font-semibold text-lg text-center w-full flex justify-center items-center">
+            <div :class="{ 'max-h-14': !hovered, 'overflow-hidden': !hovered }" class="skeleton-content-hide color-white font-semibold text-lg text-center w-full flex justify-center">
               <span>{{ movie.title }}</span>
             </div>
           </div>
@@ -72,7 +61,9 @@ export default {
     loading: Boolean,
   },
   data() {
-    return {}
+    return {
+      hovered: false,
+    }
   },
   methods: {
     round_rating(value) {

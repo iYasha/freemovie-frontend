@@ -26,8 +26,8 @@
           </div>
           <button
               @click.prevent="console.log('add to favorites')"
-              class="badge skeleton-content-hide badge-favorite cursor-pointer w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center">
-            <font-awesome-icon class="h-4 w-4" icon="fa-solid fa-plus"/>
+              class="badge skeleton-content-hide badge-icon cursor-pointer w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center">
+            <font-awesome-icon class="h-4 w-4" icon="fa-regular fa-bookmark"/>
           </button>
 
         </div>
@@ -95,11 +95,6 @@ export default {
   position: relative;
 }
 
-@keyframes skeleton-loading {
-  to {
-    background-position: left;
-  }
-}
 
 .skeleton-wrapper > *::before {
   background: linear-gradient(90deg, #323232 40%, #404040, #323232 60%) right / 300% 100%;

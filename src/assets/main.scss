@@ -28,7 +28,7 @@ input[type="checkbox"] {
 }
 
 .bg-gray {
-    background-color: #282828;
+    background-color: #282828 !important;
 }
 
 .bg-red {
@@ -78,7 +78,20 @@ input[type="checkbox"] {
     }
 }
 
+// START PLAYER STYLES
+
 #player_playlist1 > pjsdiv > [me=head_x-0] {
+    background-color: rgb(219, 0, 0.9);
+    color: #fff !important;
+
+    line {
+        stroke: #fff !important;
+    }
+}
+
+#player_playlist1 > pjsdiv > pjsdiv,
+#player_playlist2 > pjsdiv > pjsdiv,
+#player_playlist3 > pjsdiv > pjsdiv {
     background-color: rgb(219, 0, 0.9);
     color: #fff !important;
 
@@ -94,6 +107,8 @@ input[type="checkbox"] {
 #oframeplayer {
     border-radius: 5px;
 }
+
+// END PLAYER STYLES
 
 .breaker {
     height: 2px;
@@ -151,10 +166,18 @@ input[type="checkbox"] {
     transition: .3s;
 }
 
-.badge-favorite:hover {
+.badge-icon:hover {
     @extend .color-red;
-    color: red;
 }
 
+@keyframes skeleton-loading {
+    to {
+        background-position: left;
+    }
+}
 
+.skeleton-block {
+    background: linear-gradient(90deg, #323232 40%, #404040, #323232 60%) right / 300% 100%;
+    animation: skeleton-loading 1.5s linear infinite;
+}
 

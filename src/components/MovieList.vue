@@ -52,13 +52,13 @@
       </div>
       <div class="grid grid-cols-4 2xl:grid-cols-7 gap-6">
         <div v-if="loadingMovie" v-for="index in results_per_page" :key="index" class="col-span-1 mt-5">
-          <MovieCard class="h-72" :loading="loadingMovie" :movie="skeletonMovie" />
+          <MovieCard class="h-72" :loading="loadingMovie" :movie="skeletonMovie"/>
         </div>
         <div v-else-if="movies.length === 0" class="col-span-4 mt-5 color-white text-2xl">
           <h1>Movies not found</h1>
         </div>
         <div v-else v-for="movie in movies" :key="movie.id" class="col-span-1 mt-5">
-          <MovieCard class="h-72" :loading="loadingMovie" :movie="movie" />
+          <MovieCard class="h-72" :loading="loadingMovie" :movie="movie"/>
         </div>
       </div>
 
@@ -75,6 +75,9 @@ import axios from 'axios';
 import MovieMenuDropdown from './MovieMenuDropdown.vue';
 import Dropdown from "@/components/Dropdown.vue";
 import MovieCard from "@/components/MovieCard.vue";
+import {useAuthStore} from "@/stores/auth.js";
+import GenreService from "@/services/genre.service";
+import MovieService from "@/services/movie.service.js";
 
 export default {
   components: {
@@ -152,77 +155,66 @@ export default {
       await this.fetchMovies(1);
     },
     async fetchGenres() {
-      const url = import.meta.env.VITE_API_URL + '/api/v1/genres/'
-      try {
-        const authToken = import.meta.env.VITE_AUTH_TOKEN; // Replace with your actual authentication token
-        const response = await axios.get(url, {
-          headers: {
-            'Content-Type': 'application/json',
-            'X-API-KEY': authToken,
+      GenreService.getAll().then(
+          response => {
+            response.data.data.forEach((item) => {
+              this.genres.push({
+                id: item.id,
+                value: item.title,
+                isEnabled: false,
+              });
+            });
           },
-        });
-        response.data.data.forEach((item) => {
-          this.genres.push({
-            id: item.id,
-            value: item.title,
-            isEnabled: false,
-          });
-        });
-      } catch (error) {
-        console.error('Error fetching genres:', error);
-      }
+          error => {
+            console.log(error);
+          }
+      );
     },
     async getNextPage() {
       await this.fetchMovies(this.movies_info.next);
     },
     async fetchMovies(page) {
-      try {
-        if (page === 1) {
-          this.loadingMovie = true;
-        }
-        const ganre_ids = this.genres.filter((item) => item.isEnabled === true).map((item) => item.id).join(',');
-        const url = import.meta.env.VITE_API_URL + '/api/v1/movies/';
-        const authToken = import.meta.env.VITE_AUTH_TOKEN; // Replace with your actual authentication token
-        const params = {
-          page: page,
-          page_size: this.results_per_page,
-          movie_type: this.movieType,
-        };
-        const sorting_fields = this.sorting_fields[this.current_sorting]
-        if (sorting_fields.length > 0) {
-          params.order_by = sorting_fields;
-        }
-        if (ganre_ids.length > 0) {
-          params.genre__id__in = ganre_ids;
-        }
-        if (this.imdb_rating > 0) {
-          params.imdb_rating__gte = this.imdb_rating;
-        }
-        if (this.year_from > 0) {
-          params.release_date__gte = this.year_from + '-01-01';
-        }
-        if (this.year_to > 0) {
-          params.release_date__lte = this.year_to + '-12-31';
-        }
-        if (this.search.length > 0) {
-          params.search = this.search;
-        }
-        const response = await axios.get(url, {
-          headers: {
-            'Content-Type': 'application/json',
-            'X-API-KEY': authToken,
-          },
-          params: params,
-        });
-        const response_data = response.data.data;
-        this.movies = [...this.movies, ...response_data.results];
-        this.movies_info.total_count = response_data.total_count;
-        this.movies_info.page_count = response_data.page_count;
-        this.movies_info.next = response_data.next;
-        this.loadingMovie = false;
-      } catch (error) {
-        console.error('Error fetching movies:', error);
+      if (page === 1) {
+        this.loadingMovie = true;
       }
+      const ganre_ids = this.genres.filter((item) => item.isEnabled === true).map((item) => item.id).join(',');
+      const params = {
+        page: page,
+        page_size: this.results_per_page,
+        movie_type: this.movieType,
+      };
+      const sorting_fields = this.sorting_fields[this.current_sorting]
+      if (sorting_fields.length > 0) {
+        params.order_by = sorting_fields;
+      }
+      if (ganre_ids.length > 0) {
+        params.genre__id__in = ganre_ids;
+      }
+      if (this.imdb_rating > 0) {
+        params.imdb_rating__gte = this.imdb_rating;
+      }
+      if (this.year_from > 0) {
+        params.release_date__gte = this.year_from + '-01-01';
+      }
+      if (this.year_to > 0) {
+        params.release_date__lte = this.year_to + '-12-31';
+      }
+      if (this.search.length > 0) {
+        params.search = this.search;
+      }
+      MovieService.get(params).then(
+          response => {
+            const response_data = response.data.data;
+            this.movies = [...this.movies, ...response_data.results];
+            this.movies_info.total_count = response_data.total_count;
+            this.movies_info.page_count = response_data.page_count;
+            this.movies_info.next = response_data.next;
+            this.loadingMovie = false;
+          },
+          error => {
+            console.log(error);
+          }
+      );
     },
   },
 };

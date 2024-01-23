@@ -40,7 +40,7 @@ function getStreamUrl(rezka_movie_id, rezka_audio_id, host, authToken, movie_typ
             const xhr = new XMLHttpRequest();
             xhr.open('POST', requestUrl, false);
             xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('X-API-KEY', authToken);
+            xhr.setRequestHeader('Authorization', authToken);
             xhr.send(JSON.stringify(cdn_response));
             return JSON.parse(xhr.responseText).data;
         } catch (error) {
@@ -58,7 +58,7 @@ function getStreamUrl(rezka_movie_id, rezka_audio_id, host, authToken, movie_typ
         const xhr = new XMLHttpRequest();
         xhr.open('GET', requestUrl, false);
         xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('X-API-KEY', authToken);
+        xhr.setRequestHeader('Authorization', authToken);
         xhr.send();
         const response = JSON.parse(xhr.responseText);
         const stream_response = getStreamResponse(response.data);

@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import AllMoviesView from '../views/AllMoviesView.vue'
 import AllTVShowsView from "@/views/AllTVShowsView.vue";
+import {useAuthStore} from "@/stores/auth.js";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,5 +33,17 @@ const router = createRouter({
         },
     ]
 })
+
+router.beforeEach(async (to) => {
+    // redirect to login page if not logged in and trying to access a restricted page
+    const publicPages = ['/login', '/register'];
+    const authRequired = !publicPages.includes(to.path);
+    const auth = useAuthStore();
+
+    if (authRequired && !auth.accessToken) {
+        auth.returnUrl = to.fullPath;
+        return '/login';
+    }
+});
 
 export default router

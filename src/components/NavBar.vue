@@ -1,5 +1,9 @@
 <script setup>
 import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/vue'
+import {useAuthStore} from "@/stores/auth.js";
+
+const authStore = useAuthStore();
+
 </script>
 
 <template>
@@ -11,8 +15,8 @@ import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/vue'
       <div class="menu">
         <ul class="flex">
           <li class="mr-4"><a href="#" class="link font-medium">Home</a></li>
-          <li class="mr-4"><router-link to="/tv-shows" class="link font-medium">TV Shows</router-link></li>
-          <li><router-link to="/movies" class="link font-medium">Movies</router-link></li>
+          <li class="mr-4"><router-link active-class="color-red" to="/tv-shows" class="link font-medium">TV Shows</router-link></li>
+          <li><router-link active-class="color-red" to="/movies" class="link font-medium">Movies</router-link></li>
         </ul>
       </div>
       <div class="account-menu color-white">
@@ -34,10 +38,10 @@ import {Menu, MenuButton, MenuItem, MenuItems} from '@headlessui/vue'
             <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Account
               settings</a>
           </MenuItem>
-          <MenuItem v-slot="{ active }">
-            <button type="submit"
+          <MenuItem @click="authStore.logout()" v-slot="{ active }">
+            <button
                     :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block w-full px-4 py-2 text-left text-sm']">
-              Sign out
+              Logout
             </button>
           </MenuItem>
         </div>

@@ -123,6 +123,8 @@
 import pjs from '../assets/playerjsloader.js';
 import axios from 'axios';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
+import {useAuthStore} from "@/stores/auth.js";
+import MovieService from "@/services/movie.service.js";
 
 // https://playerjs.com/docs/ru=chromecast
 
@@ -154,6 +156,8 @@ export default {
       player: Object,
       progress_saved: false,
       player_current_file_key: null,
+
+      auth_store: useAuthStore(),
     };
   },
   mounted() {
@@ -195,25 +199,18 @@ export default {
         return;
       }
       this.progress_saved = true;
-      const url = import.meta.env.VITE_API_URL + '/api/v1/watch/progress/save';
       const playlist = this.parsePlaylistId(this.player.api('playlist_id'));
-      try {
-        const authToken = import.meta.env.VITE_AUTH_TOKEN;
-        await axios.post(url, {
-          movie_id: playlist.movie_id,
-          audio_track_id: playlist.audio_id,
-          season_no: playlist.season,
-          episode_no: playlist.episode,
-          time_code: event.info,
-        }, {
-          headers: {
-            'Content-Type': 'application/json',
-            'X-API-KEY': authToken,
-          },
-        });
-      } catch (error) {
-        console.error('Error saving progress:', error);
-      }
+      MovieService.saveWatchProgress({
+        movie_id: playlist.movie_id,
+        audio_track_id: playlist.audio_id,
+        season_no: playlist.season,
+        episode_no: playlist.episode,
+        time_code: event.info,
+      }).then(
+          error => {
+            console.log(error);
+          }
+      );
     },
     async loadPlayer() {
       this.breakPlayerLocalStorage();
@@ -240,7 +237,7 @@ export default {
       })();
     },
     mapParamsForStreamUrl(rezka_movie_id, rezka_audio_id, movie_type, season = 1, episode = 1, return_data = false) {
-      return '' + rezka_movie_id + ',' + rezka_audio_id + ', "' + import.meta.env.VITE_API_URL + '", "' + import.meta.env.VITE_AUTH_TOKEN + '", "' + movie_type + '", ' + season + ', ' + episode + ', ' + return_data;
+      return '' + rezka_movie_id + ',' + rezka_audio_id + ', "' + import.meta.env.VITE_API_URL + '", "' + `Bearer ${this.auth_store.accessToken}` + '", "' + movie_type + '", ' + season + ', ' + episode + ', ' + return_data;
     },
     async loadFilm() {
       this.movie.audio_tracks.forEach((audio_track) => {
@@ -294,7 +291,7 @@ export default {
           this.movie.rezka_movie_id,
           rezka_audio_id,
           import.meta.env.VITE_API_URL,
-          import.meta.env.VITE_AUTH_TOKEN,
+          `Bearer ${this.auth_store.accessToken}`,
           this.movie.movie_type,
           current_season,
           current_episode,
@@ -351,33 +348,27 @@ export default {
       });
     },
     async loadMovie() {
+      MovieService.detail(this.$route.params.id).then(
+          response => {
+            this.movie = response.data.data;
+            this.short_description = this.movie.description.slice(0, 200).split(' ').slice(0, -1).join(' ')
+            this.parseMovieAttributes();
+            if (this.movie.movie_type === 'film') {
+              this.loadFilm();
+            } else if (this.movie.movie_type === 'series') {
+              this.loadSeries();
+            } else {
+              return;
+            }
 
-      const url = import.meta.env.VITE_API_URL + '/api/v1/movies/' + this.$route.params.id + '/';
-      try {
-        const authToken = import.meta.env.VITE_AUTH_TOKEN; // Replace with your actual authentication token
-        const response = await axios.get(url, {
-          headers: {
-            'Content-Type': 'application/json',
-            'X-API-KEY': authToken,
+            this.loading = false;
+
+            this.loadPlayer();
           },
-        });
-        this.movie = response.data.data;
-        this.short_description = this.movie.description.slice(0, 200).split(' ').slice(0, -1).join(' ')
-        this.parseMovieAttributes();
-        if (this.movie.movie_type === 'film') {
-          await this.loadFilm();
-        } else if (this.movie.movie_type === 'series') {
-          await this.loadSeries();
-        } else {
-          return;
-        }
-
-        this.loading = false;
-
-        await this.loadPlayer();
-      } catch (error) {
-        console.error('Error fetching movies:', error);
-      }
+          error => {
+            console.log(error);
+          }
+      );
     },
   },
 };

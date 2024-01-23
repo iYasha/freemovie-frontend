@@ -2,23 +2,71 @@
   <main>
     <div class="form-wrapper bg-gray rounded-1">
       <h1 class="text-5xl font-bold color-white text-center">Sign in<span class="color-red">.</span></h1>
-      <form action="#">
-        <div class="form-control">
-          <input type="text" required>
+      <div class="form">
+        <div class="form-control" :class="{'invalid-input': email_error}">
+          <input v-model="email" type="email" required>
           <label>Email</label>
         </div>
-        <div class="form-control">
-          <input type="password" required>
+        <p class="mb-3 color-red" v-if="email_error">
+          {{ email_error.message }}
+        </p>
+
+        <div class="form-control" :class="{'invalid-input': password_error}">
+          <input v-model="password" type="password" required>
           <label>Password</label>
         </div>
-        <button @click="console.log('watch trailer')" class="action-button w-full text-lg">Sign In</button>
-      </form>
+        <p class="mb-3 color-red" v-if="password_error">
+          {{ password_error.message }}
+        </p>
+        <button @click="login" class="action-button w-full text-lg">Sign In</button>
+      </div>
+      <p class="mb-3 color-red" v-if="error && error.custom_code !== 4002">
+        <font-awesome-icon icon="fa-solid fa-triangle-exclamation" class="color-red mr-1"/>
+        {{ error.message }}
+      </p>
       <p>New to FreeMovie? <router-link to="register">Sign up now</router-link></p>
     </div>
   </main>
 </template>
 
+<script>
+import { useAuthStore } from '@/stores/auth';
+export default {
+  data() {
+    return {
+      email: null,
+      password: null,
+      error: null,
+
+      email_error: null,
+      password_error: null,
+    };
+  },
+  methods: {
+    async login() {
+      const authStore = useAuthStore();
+      this.error = await authStore.login(this.email, this.password);
+
+      if (this.error) {
+        this.email_error = this.error.details.find((detail) => detail.field === 'email');
+        this.password_error = this.error.details.find((detail) => detail.field === 'password');
+      }
+      else {
+        this.email_error = null;
+        this.password_error = null;
+      }
+    },
+  },
+};
+</script>
+
+
 <style scoped>
+
+.invalid-input {
+  border: 1px solid red;
+  border-radius: 4px;
+}
 
 .form-wrapper {
   position: absolute;
@@ -29,11 +77,11 @@
   transform: translate(-50%, -50%);
 }
 
-.form-wrapper form {
+.form-wrapper .form {
   margin: 25px 0 25px;
 }
 
-form .form-control {
+.form .form-control {
   height: 50px;
   position: relative;
   margin-bottom: 16px;
@@ -85,7 +133,7 @@ form .form-control {
   color: #b3b3b3;
 }
 
-form .form-help :where(label, a) {
+.form .form-help :where(label, a) {
   font-size: 0.9rem;
 }
 
@@ -108,13 +156,8 @@ form .form-help :where(label, a) {
     top: 43%;
   }
 
-  .form-wrapper form {
+  .form-wrapper .form {
     margin: 25px 0 40px;
   }
 }
 </style>
-
-<script>
-
-export default {};
-</script>

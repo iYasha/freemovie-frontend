@@ -10,63 +10,31 @@ function mapQualityStream(streams) {
 }
 
 
-function getStreamUrl(rezka_movie_id, rezka_audio_id, host, authToken, movie_type, season= 1, episode= 1, return_data=false) {
-    function getStreamResponse(request_data) {
-        try {
-            const xhr = new XMLHttpRequest();
-            xhr.open(request_data.method, request_data.url, false);
-            Object.entries(request_data.headers).forEach(([key, value]) => {
-                xhr.setRequestHeader(key, value);
-            });
-            const urlEncodedData = Object.keys(request_data.data)
-                .map(
-                    (key) =>
-                        encodeURIComponent(key) +
-                        '=' +
-                        encodeURIComponent(request_data.data[key])
-                )
-                .join('&');
-
-            xhr.send(urlEncodedData);
-            return JSON.parse(xhr.responseText);
-        } catch (error) {
-            console.error('Error fetching movies:', error);
-        }
+function getStreamUrl(
+    movie_id,
+    tv_series_id,
+    translator_hash,
+    host,
+    authToken,
+    season=1,
+    episode=1,
+    return_data=false,
+) {
+    let requestUrl = null;
+    if (movie_id !== null) {
+        requestUrl = host + '/api/v1/movies/' + movie_id + '/stream/?translator_hash=' + translator_hash;
     }
-
-    function getStreamUrls(cdn_response) {
-        const requestUrl = host + '/api/v1/movies/' + movie_type + '/stream/parse/';
-        try {
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', requestUrl, false);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('Authorization', authToken);
-            xhr.send(JSON.stringify(cdn_response));
-            return JSON.parse(xhr.responseText).data;
-        } catch (error) {
-            console.error('Error fetching movies:', error);
-        }
+    if (tv_series_id !== null) {
+        requestUrl = host + '/api/v1/tv-series/' + tv_series_id + '/stream/?translator_hash=' + translator_hash + '&season_no=' + season + '&episode_no=' + episode;
     }
-
-    let requestUrl = host + '/api/v1/movies/' + movie_type + '/' + rezka_movie_id + '/audio/' + rezka_audio_id;
-    if (movie_type === 'series') {
-        requestUrl += '/season/' + season + '/episode/' + episode;
-    }
-    requestUrl += '/stream/request'
-
     try {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', requestUrl, false);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader('Authorization', authToken);
         xhr.send();
-        const response = JSON.parse(xhr.responseText);
-        const stream_response = getStreamResponse(response.data);
-        const parsed_data = getStreamUrls(stream_response);
-        if (return_data === true) {
-            return parsed_data;
-        }
-        return mapQualityStream(parsed_data.streams);
+        const stream = JSON.parse(xhr.responseText).data.streams;
+        return mapQualityStream(stream);
     } catch (error) {
         console.error('Error fetching movies:', error);
     }

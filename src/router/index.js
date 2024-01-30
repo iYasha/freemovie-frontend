@@ -1,35 +1,56 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import AllMoviesView from '../views/AllMoviesView.vue'
-import AllTVShowsView from "@/views/AllTVShowsView.vue";
+import AllMoviesPage from '../pages/AllMoviesPage.vue'
+import AllTVSeriesPage from "@/pages/AllTVSeriesPage.vue";
 import {useAuthStore} from "@/stores/auth.js";
+import UserProfilePage from "@/pages/UserProfilePage.vue";
+import MoviePage from "@/pages/MoviePage.vue";
+import LoginPage from "@/pages/LoginPage.vue";
+import RegisterPage from "@/pages/RegisterPage.vue";
+import HomePage from "@/pages/HomePage.vue";
+import TVSeriesPage from "@/pages/TVSeriesPage.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
+            path: '/',
+            name: 'home-page',
+            component: HomePage,
+        },
+        {
+            path: '/profile',
+            name: 'profile',
+            component: UserProfilePage,
+        },
+        {
             path: '/tv-shows',
             name: 'tv-shows',
-            component: AllTVShowsView,
+            component: AllTVSeriesPage,
+        },
+        {
+            path: '/tv-show/:id',
+            name: 'tv-show',
+            component: TVSeriesPage,
         },
         {
             path: '/movies',
             name: 'movies',
-            component: AllMoviesView,
+            component: AllMoviesPage,
         },
         {
             path: '/movie/:id',
             name: 'movie',
-            component: () => import('../views/MovieView.vue')
+            component: MoviePage,
         },
         {
             path: '/login',
             name: 'login',
-            component: () => import('../views/LoginView.vue')
+            component: LoginPage,
         },
         {
             path: '/register',
             name: 'register',
-            component: () => import('../views/RegisterView.vue')
+            component: RegisterPage,
         },
     ]
 })

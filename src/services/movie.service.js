@@ -9,8 +9,12 @@ class MovieService {
     detail(id) {
         return api.get(`/v1/movies/${id}/`);
     }
-    saveWatchProgress(data) {
-        return api.post('/v1/watch/progress/save', data)
+    get_stream(id, translator_hash=null) {
+        return api.get(`/v1/movies/${id}/stream/`, {
+            params: {
+                translator_hash: translator_hash,
+            }
+        });
     }
 }
 

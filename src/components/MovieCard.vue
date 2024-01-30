@@ -1,24 +1,24 @@
 <template>
   <div class="rounded-1">
-    <router-link :to="loading ? '' : '/movie/' + movie.id">
+    <router-link :to="loading ? '' : (movieType === 'film' ? '/movie/' : '/tv-show/') + movie.id">
       <div class="movie-card h-full bg-cover bg-center p-3 flex flex-col justify-between rounded-1" @mouseover="hovered=true" @mouseleave="hovered=false">
 
         <div
             class="card-image rounded-1"
             :class="{ 'skeleton': loading }"
-            :style="{ backgroundImage: 'linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,212,255,0) 60%), url(' + movie.poster_url + ')' }"
+            :style="{ backgroundImage: 'linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,212,255,0) 60%), url(' + movie.poster_path + ')' }"
         ></div>
 
         <div class="flex"
              :class="{
-          'justify-between': movie.imdb_rating || movie.release_date || loading,
-          'justify-end': !movie.imdb_rating && !movie.release_date,
+          'justify-between': movie.rating || movie.release_date || loading,
+          'justify-end': !movie.rating && !movie.release_date,
           'skeleton-wrapper': loading,
         }">
-          <div v-if="movie.imdb_rating || loading"
+          <div v-if="movie.rating || loading"
                class="skeleton-content-hide w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center">
             <font-awesome-icon class="mr-1 h-4 w-4 color-orange" icon="fa-solid fa-star"/>
-            <span>{{ round_rating(movie.imdb_rating) }}</span>
+            <span>{{ round_rating(movie.rating) }}</span>
           </div>
           <div v-if="movie.release_date || loading"
                class="skeleton-content-hide w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center">
@@ -41,7 +41,7 @@
 
           <div class="card-hidden" v-if="!loading">
 
-            <div class="color-white mt-2 text-center">{{ movie.short_description }}</div>
+            <div class="color-white mt-2 text-center">{{ movie.genres.map(genre => genre.title).join(', ') }}</div>
           </div>
         </div>
 
@@ -59,6 +59,10 @@ export default {
   props: {
     movie: Object,
     loading: Boolean,
+    movieType: {
+      type: String,
+      default: 'film',
+    },
   },
   data() {
     return {
@@ -122,7 +126,7 @@ export default {
   position: absolute;
   z-index: -1;
   overflow: hidden;
-  background-size: contain;
+  background-size: cover;
   transition: .3s;
 }
 

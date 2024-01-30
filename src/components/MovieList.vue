@@ -58,7 +58,7 @@
           <h1>Movies not found</h1>
         </div>
         <div v-else v-for="movie in movies" :key="movie.id" class="col-span-1 mt-5">
-          <MovieCard class="h-72" :loading="loadingMovie" :movie="movie"/>
+          <MovieCard class="h-72" :loading="loadingMovie" :movie-type="movieType" :movie="movie"/>
         </div>
       </div>
 
@@ -78,6 +78,7 @@ import MovieCard from "@/components/MovieCard.vue";
 import {useAuthStore} from "@/stores/auth.js";
 import GenreService from "@/services/genre.service";
 import MovieService from "@/services/movie.service.js";
+import TVSeriesService from "@/services/tv-series.service.js";
 
 export default {
   components: {
@@ -181,17 +182,16 @@ export default {
       const params = {
         page: page,
         page_size: this.results_per_page,
-        movie_type: this.movieType,
       };
       const sorting_fields = this.sorting_fields[this.current_sorting]
       if (sorting_fields.length > 0) {
         params.order_by = sorting_fields;
       }
       if (ganre_ids.length > 0) {
-        params.genre__id__in = ganre_ids;
+        params.genre_ids = ganre_ids;
       }
       if (this.imdb_rating > 0) {
-        params.imdb_rating__gte = this.imdb_rating;
+        params.rating__gte = this.imdb_rating;
       }
       if (this.year_from > 0) {
         params.release_date__gte = this.year_from + '-01-01';
@@ -202,7 +202,8 @@ export default {
       if (this.search.length > 0) {
         params.search = this.search;
       }
-      MovieService.get(params).then(
+      const service = this.movieType === 'film' ? MovieService : TVSeriesService;
+      service.get(params).then(
           response => {
             const response_data = response.data.data;
             this.movies = [...this.movies, ...response_data.results];

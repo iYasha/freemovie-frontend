@@ -8,7 +8,7 @@ import router from './router'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faUser, faMagnifyingGlass, faStar, faPlus, faHeart as faHeartSolid, faBookmark as faBookmarkSolid, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faArrowLeft, faMagnifyingGlass, faStar, faPlus, faHeart as faHeartSolid, faBookmark as faBookmarkSolid, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { faHeart, faBookmark } from '@fortawesome/free-regular-svg-icons'
 import setupInterceptors from "@/services/setupInterceptors.js";
 library.add(faUser)
@@ -20,14 +20,7 @@ library.add(faHeartSolid)
 library.add(faBookmark)
 library.add(faBookmarkSolid)
 library.add(faTriangleExclamation)
-
-// TODO: Interesting for future purpose
-// import axios from 'axios';
-// axios.defaults.baseURL = process.env.VUE_APP_API_URL
-// axios.interceptors.request.use(function (config) {
-//     config.headers['X-Binarybox-Api-Key'] = process.env.VUE_APP_API_KEY;
-//     return config;
-// });
+library.add(faArrowLeft)
 
 const app = createApp(App)
 

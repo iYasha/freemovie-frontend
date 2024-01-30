@@ -7,6 +7,10 @@
     min-height: 100vh;
 }
 
+:root {
+    accent-color: #e50914;
+}
+
 
 input[type="checkbox"] {
     accent-color: #e50914;
@@ -76,6 +80,11 @@ input[type="checkbox"] {
     &:hover {
         background: #B81D24;
     }
+}
+
+.action-button[disabled] {
+    background: #B81D24;
+    opacity: .5;
 }
 
 // START PLAYER STYLES

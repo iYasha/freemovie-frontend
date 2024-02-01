@@ -98,6 +98,26 @@ export default {
           log: this.logs,
           hlsdebug: this.hlsDebug,
           file: this.files,
+          preload: 1,
+          // nativenotios: 1,
+          // nativenotipad: 1,
+
+          lang: 'en',
+          default_quality:"max",
+          hotkey: {
+            on: 1,
+            f: 1,
+            r: 1,
+            m: 1,
+            seek: 5,
+            leftright: "seek",
+            space: 1,
+            updown: "volume",
+            seeksides: 0,
+            nums: 0,
+            volumewheelfull: 1,
+            wheelstep: 0.2
+          },
           hlsconfig: {
             maxBufferLength: 600,
             maxMaxBufferLength: 600,

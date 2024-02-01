@@ -43,8 +43,7 @@ export default {
     },
     files: function() {
       if (this.readyToPlay && this.player && this.files) {
-        console.log('playlist', this.files);
-        // we also should start from this season, episode and time_code it doesn't implemented curently
+        // todo: we also should start from this season, episode and time_code it doesn't implemented curently
         this.loadPlayer();
       }
     },
@@ -76,7 +75,7 @@ export default {
       }
       this.progress_saved = true;
 
-      PlayerService.saveWatchProgress(this.player.api('playlist_id'), this.time_code).then(
+      PlayerService.saveWatchProgress(this.player.api('playlist_id'), this.time_code, this.player.api('duration')).then(
           error => {
             console.log(error);
           }
@@ -84,7 +83,6 @@ export default {
     },
     breakPlayerLocalStorage() {
       const url = window.location.href;
-      console.log(this.currentFileKey)
 
       const local_storage_key = 'pljsplayfrom_player' + url.replace('https://', '').replace('http://', '');
       if (this.currentFileKey !== null) {

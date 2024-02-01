@@ -8,6 +8,8 @@
             :class="{ 'skeleton': loading }"
             :style="{ backgroundImage: 'linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,212,255,0) 60%), url(' + movie.poster_path + ')' }"
         ></div>
+        <div class="watch-progress" v-if="watch_progress !== null" :style="{width: `${watch_progress}%`}"></div>
+        <div class="watch-progress-gray" v-if="watch_progress !== null"></div>
 
         <div class="flex"
              :class="{
@@ -25,9 +27,10 @@
             <span>{{ format_date(movie.release_date) }}</span>
           </div>
           <button
-              @click.prevent="console.log('add to favorites')"
+              @click.prevent="toggleWatchlist()"
               class="badge skeleton-content-hide badge-icon cursor-pointer w-fit text-sm bg-dark color-soft-gray font-medium py-1.5 px-3 rounded-1 flex justify-center items-center">
-            <font-awesome-icon class="h-4 w-4" icon="fa-regular fa-bookmark"/>
+            <font-awesome-icon v-if="this.is_in_watchlist" class="h-4 w-4 color-red" icon="fa-solid fa-bookmark"/>
+            <font-awesome-icon v-else class="h-4 w-4" icon="fa-regular fa-bookmark"/>
           </button>
 
         </div>
@@ -52,6 +55,7 @@
 
 <script>
 import moment from "moment";
+import WatchlistService from "@/services/watchlist.service.js";
 
 export default {
   name: "MovieCard",
@@ -67,9 +71,33 @@ export default {
   data() {
     return {
       hovered: false,
+      is_in_watchlist: false,
+      old_watchlist_state: false,
     }
   },
+  computed: {
+    watch_progress() {
+      if (!this.movie.watch_progress || !this.movie.watch_progress.watch_in_percent) {
+        return null;
+      }
+      return Math.round(this.movie.watch_progress.watch_in_percent)
+    },
+  },
+  mounted() {
+    this.is_in_watchlist = this.movie.is_in_watchlist
+  },
   methods: {
+    toggleWatchlist() {
+      WatchlistService.toggle(this.movie.id, this.movieType, !this.is_in_watchlist).then((response) => {
+        if (response.data.custom_code !== 0) {
+          this.is_in_watchlist = this.old_watchlist_state
+        }
+      }).catch((e) => {
+        this.is_in_watchlist = this.old_watchlist_state
+      })
+      this.old_watchlist_state = this.is_in_watchlist
+      this.is_in_watchlist = !this.is_in_watchlist
+    },
     round_rating(value) {
       if (value) {
        return value.toFixed(1)
@@ -156,6 +184,33 @@ export default {
   visibility: visible;
   opacity: 1;
   display: block;
+}
+
+.watch-progress {
+  height: 4px;
+  background: #e50914;
+  content: '';
+  left: 0;
+  bottom: 0;
+  position: absolute;
+  z-index: 0;
+  overflow: hidden;
+  background-size: cover;
+  transition: .3s;
+}
+
+.watch-progress-gray {
+  height: 4px;
+  width: 100%;
+  background: #a0a0a0;
+  content: '';
+  left: 0;
+  bottom: 0;
+  position: absolute;
+  z-index: -1;
+  overflow: hidden;
+  background-size: cover;
+  transition: .3s;
 }
 
 </style>

@@ -1,17 +1,21 @@
 <template>
   <default-layout>
     <main class="w-5/6">
-      <h1 class="text-5xl font-bold color-white">Home page<span class="color-red">.</span></h1>
+      <popular-titles/>
+      <continue-to-watch class="mt-10"/>
     </main>
   </default-layout>
 </template>
 
 <script>
-import MovieList from "@/components/MovieList.vue";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
+import PopularTitles from "@/components/PopularTitles.vue";
+import ContinueToWatch from "@/components/ContinueToWatch.vue";
 
 export default {
   components: {
+    ContinueToWatch,
+    PopularTitles,
     DefaultLayout,
   },
 };

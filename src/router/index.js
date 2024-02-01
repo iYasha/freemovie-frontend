@@ -8,6 +8,7 @@ import LoginPage from "@/pages/LoginPage.vue";
 import RegisterPage from "@/pages/RegisterPage.vue";
 import HomePage from "@/pages/HomePage.vue";
 import TVSeriesPage from "@/pages/TVSeriesPage.vue";
+import MyWatchlistPage from "@/pages/MyWatchlistPage.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +22,11 @@ const router = createRouter({
             path: '/profile',
             name: 'profile',
             component: UserProfilePage,
+        },
+        {
+            path: '/watchlist',
+            name: 'watchlist',
+            component: MyWatchlistPage,
         },
         {
             path: '/tv-shows',

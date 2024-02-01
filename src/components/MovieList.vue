@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-wrap w-100">
 
-    <div class="w-1/4 pr-6 relative mt-10">
+    <div class="lg:w-1/4 lg:pr-6 relative mt-10 sm:w-full sm:pr-0">
       <div class="bg-gray rounded-1 sticky top-10 p-5">
-        <MovieMenuDropdown title="Genres" :open-by-default="true">
+        <MovieMenuDropdown title="Genres" :open-by-default="dropdownOpenByDefault()">
           <div v-for="item in genres.slice(0, 10)">
             <label class="block text-lg transition mt-1"
                    :class=" {'color-white': item.isEnabled, 'color-soft-gray': item.isEnabled === false} ">
@@ -14,7 +14,7 @@
           </div>
         </MovieMenuDropdown>
         <div class="breaker mt-5"></div>
-        <MovieMenuDropdown title="Rating" :open-by-default="true" class="mt-5">
+        <MovieMenuDropdown title="Rating" :open-by-default="dropdownOpenByDefault()" class="mt-5">
           <div class="flex justify-between color-soft-gray">
             <span class="block font-medium">IMDb</span>
             <span class="block">{{ imdb_rating }}</span>
@@ -22,7 +22,7 @@
           <input class="w-full" type="range" @change="filtersUpdated" v-model="imdb_rating" id="imdb_rating"
                  name="volume" min="0" max="10" step="0.1"/>
         </MovieMenuDropdown>
-        <MovieMenuDropdown title="Release year" :open-by-default="true" class="mt-5">
+        <MovieMenuDropdown title="Release year" :open-by-default="dropdownOpenByDefault()" class="mt-5">
           <div class="flex justify-between color-soft-gray">
             <div class="w-1/2 block mr-1">
               <span class="block font-medium">From</span>
@@ -37,7 +37,7 @@
       </div>
     </div>
 
-    <div class="w-3/4 mt-10">
+    <div class="lg:w-3/4 mt-10 sm:w-full">
       <div class="flex justify-between items-center">
         <div class="w-2/5">
           <div class="input flex justify-between items-center">
@@ -50,14 +50,14 @@
           <Dropdown @selected="setSortBy" :items="sorting_options"/>
         </div>
       </div>
-      <div class="grid grid-cols-4 2xl:grid-cols-7 gap-6">
-        <div v-if="loadingMovie" v-for="index in results_per_page" :key="index" class="col-span-1 mt-5">
+      <div class="grid lg:grid-cols-4 sm:grid-cols-2 2xl:grid-cols-7 gap-6 lg:mt-0 sm:mt-7">
+        <div v-if="loadingMovie" v-for="index in results_per_page" :key="index" class="col-span-1 lg:mt-5 sm:mt-0">
           <MovieCard class="h-72" :loading="loadingMovie" :movie="skeletonMovie"/>
         </div>
-        <div v-else-if="movies.length === 0" class="col-span-4 mt-5 color-white text-2xl">
+        <div v-else-if="movies.length === 0" class="col-span-4 lg:mt-5 sm:mt-0 color-white text-2xl">
           <h1>Movies not found</h1>
         </div>
-        <div v-else v-for="movie in movies" :key="movie.id" class="col-span-1 mt-5">
+        <div v-else v-for="movie in movies" :key="movie.id" class="col-span-1 lg:mt-5 sm:mt-0">
           <MovieCard class="h-72" :loading="loadingMovie" :movie-type="movieType" :movie="movie"/>
         </div>
       </div>
@@ -79,6 +79,7 @@ import {useAuthStore} from "@/stores/auth.js";
 import GenreService from "@/services/genre.service";
 import MovieService from "@/services/movie.service.js";
 import TVSeriesService from "@/services/tv-series.service.js";
+import ResponsiveService from "@/services/responsive.service.js";
 
 export default {
   components: {
@@ -146,6 +147,10 @@ export default {
     this.fetchGenres();
   },
   methods: {
+    dropdownOpenByDefault() {
+      const responsivePrefix = ResponsiveService.getResponsivePrefix();
+      return !(responsivePrefix === 'sm' || responsivePrefix === 'md');
+    },
     async setSortBy(item) {
       this.current_sorting = item.id;
       this.movies = [];

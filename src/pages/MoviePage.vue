@@ -8,6 +8,9 @@
       :title="movie.title"
       :rating="movie.rating"
       :tagline="movie.tagline"
+      :is-in-watchlist="movie.is_in_watchlist"
+      :content-id="movie.id"
+      content-type="film"
       back-url="/movies"
       back-title="All Movies"
   >

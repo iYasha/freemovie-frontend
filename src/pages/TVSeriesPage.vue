@@ -8,6 +8,9 @@
       :title="tv_series.title"
       :rating="tv_series.rating"
       :tagline="tv_series.tagline"
+      :is-in-watchlist="tv_series.is_in_watchlist"
+      :content-id="tv_series.id"
+      content-type="tv-series"
       back-url="/tv-shows"
       back-title="All TV Shows"
   >
@@ -190,6 +193,7 @@ export default {
     },
 
     async loadStream(translator_hash=null, season=null, episode=null) {
+      // TODO: if player return 404 then we should reload stream again
       TVSeriesService.get_stream(this.tv_series.id, translator_hash, season, episode).then(
           response => {
             if (response.data.custom_code === 4001) {
@@ -231,7 +235,6 @@ export default {
                 folder: folder,
               });
             });
-            console.log(this.player_files)
             this.ready_to_play = true
 
             this.renderPlayer = true;
@@ -245,7 +248,7 @@ export default {
     parseMovieAttributes() {
       if (this.tv_series.participants) {
         this.directors = this.tv_series.participants.filter((participant) => participant.role === 'director').map((director) => director.full_name).join(', ');
-        this.actors = this.tv_series.participants.filter((participant) => participant.role === 'actor').map((actor) => {
+        this.actors = this.tv_series.participants.filter((participant) => participant.role === 'actor').map((actor) => {  // or actress
           let actor_name = actor.full_name;
           if (actor.characters) {
             actor_name += ' (' + actor.characters.join(', ') + ')';

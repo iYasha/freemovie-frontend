@@ -14,9 +14,10 @@ const authStore = useAuthStore();
       </div>
       <div class="menu">
         <ul class="flex">
-          <li class="mr-4"><a href="#" class="link font-medium">Home</a></li>
+          <li class="mr-4"><router-link active-class="color-red" to="/" class="link font-medium">Home</router-link></li>
           <li class="mr-4"><router-link active-class="color-red" to="/tv-shows" class="link font-medium">TV Shows</router-link></li>
-          <li><router-link active-class="color-red" to="/movies" class="link font-medium">Movies</router-link></li>
+          <li class="mr-4"><router-link active-class="color-red" to="/movies" class="link font-medium">Movies</router-link></li>
+          <li><router-link active-class="color-red" to="/watchlist" class="link font-medium">My Watchlist</router-link></li>
         </ul>
       </div>
       <div class="account-menu color-white">

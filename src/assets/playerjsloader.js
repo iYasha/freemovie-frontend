@@ -7,7 +7,7 @@ export default new Promise((res) => {
     script.onload = () => res();
     script.setAttribute(
         'src',
-        '/playerjs.js'
+        '/playerjs5.js'
     );
     document.head.appendChild(script);
 });

@@ -16,13 +16,12 @@ class PlayerService {
             episode: playlist[4] === 'null' ? null : playlist[4],
         };
     }
-    mapParamsForStreamUrl(movie_id, tv_series_id, translator_hash, season = 1, episode = 1, return_data = false) {
+    mapParamsForStreamUrl(movie_id, tv_series_id, translator_hash, season = 1, episode = 1) {
         const auth_store = useAuthStore();
-        return `${movie_id},${tv_series_id},"${translator_hash}","${import.meta.env.VITE_API_URL}","Bearer ${auth_store.accessToken}",${season},${episode},${return_data}`;
+        return `${movie_id},${tv_series_id},"${translator_hash}","${import.meta.env.VITE_API_URL}","Bearer ${auth_store.accessToken}",${season},${episode}`;
     }
     saveWatchProgress(playlist_id, time_code, total_duration) {
         const playlist = this.parsePlaylistId(playlist_id);
-        console.log(playlist)
         return api.post(`${this.baseUrl}/save`, {
             "movie_id": playlist.movie_id,
             "tv_series_id": playlist.tv_series_id,

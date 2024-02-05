@@ -4,7 +4,7 @@
     <div class="lg:w-1/4 lg:pr-6 relative mt-10 sm:w-full sm:pr-0">
       <div class="bg-gray rounded-1 sticky top-10 p-5">
         <MovieMenuDropdown title="Genres" :open-by-default="dropdownOpenByDefault()">
-          <div v-for="item in genres.slice(0, 10)">
+          <div v-for="item in genres">
             <label class="block text-lg transition mt-1"
                    :class=" {'color-white': item.isEnabled, 'color-soft-gray': item.isEnabled === false} ">
               <input v-model="item.isEnabled" @change="filtersUpdated" :id="item.id" type="checkbox"

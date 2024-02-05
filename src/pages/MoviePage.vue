@@ -167,17 +167,21 @@ export default {
             const streams = response.data.data.streams.map((stream) => {
               return '[' + stream.quality + ']' + stream.streams.hls;
             }).join(',');
-            response.data.data.audio_tracks.forEach((audio_track) => {
+            response.data.data.audio_tracks.forEach((audio_track, track_idx) => {
               const params = PlayerService.mapParamsForStreamUrl(this.movie.id, null, audio_track.translator_hash);
               let streamFile = 'js:getStreamUrl(' + params + ')';
+              let subtitles_url = null;
+              const playlist_id = PlayerService.generatePlaylistId(this.movie.id, null, audio_track.translator_hash);
               if (audio_track.is_default) {
                 streamFile = streams;
-                // this.player_current_file_key = '{xxx-' + this.movie.id + '-' + audio_track.translator_hash + '}';
+                subtitles_url = response.data.data.subtitles;
+                this.player_current_file_key = `{xx-${track_idx}-${playlist_id}}`;
               }
               this.player_files.push({
                 title: audio_track.title,
                 file: streamFile,
-                id: PlayerService.generatePlaylistId(this.movie.id, null, audio_track.translator_hash),
+                id: playlist_id,
+                subtitle: subtitles_url,
               });
             });
             this.ready_to_play = true;

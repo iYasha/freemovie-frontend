@@ -103,11 +103,11 @@
 
     <template v-slot:player>
       <div class="flex">
-        <div class="w-1/4 flex flex-col h-96 overflow-auto ">
+        <div class="w-1/4 flex flex-col h-96 overflow-x-scroll absolute left-0 ">
           <button
               @click="loadStream(audio_track.translator_hash)"
               v-if="audio_tracks"
-              class="action-button font-bold"
+              class="sound-track-button action-button font-bold"
               :class="{ 'mt-2': idx > 0 }"
               v-for="(audio_track, idx) in audio_tracks"
               :key="audio_track.translator_hash"
@@ -116,6 +116,7 @@
             {{ audio_track.title }}
           </button>
         </div>
+        <div class="w-1/4"></div>
         <div class="w-3/4">
           <player
               v-if="renderPlayer"
@@ -132,6 +133,13 @@
 
 </template>
 
+<style scoped>
+.sound-track-button {
+  border-radius: 0;
+  background: rgb(184,29,36);
+  background: linear-gradient(90deg, rgba(184,29,36,1) 0%, rgba(184,29,36,1) 70%, rgba(255,255,255,0) 100%);
+}
+</style>
 
 <script>
 import MovieDetail from "@/components/MovieDetail.vue";
@@ -214,19 +222,22 @@ export default {
               let folder = []
               episodes.forEach((episode, episode_idx) => {
                 let file_url = ''
+                let subtitles_url = null;
                 const playlistID = PlayerService.generatePlaylistId(null, this.tv_series.id, translator_hash, season, episode)
                 if (response_data.current_season === season && response_data.current_episode === episode) {
                   this.player_current_file_key = `{xx-${season_idx}-${episode_idx}-${playlistID}}`;
                   file_url = streams;
+                  subtitles_url = response_data.subtitles;
                 }
                 else {
-                  const params = PlayerService.mapParamsForStreamUrl(null, this.tv_series.id, translator_hash, season, episode, false);
+                  const params = PlayerService.mapParamsForStreamUrl(null, this.tv_series.id, translator_hash, season, episode);
                   file_url = 'js:getStreamUrl(' + params + ')';
                 }
                 folder.push({
                   title: 'Episode ' + episode,
                   file: file_url,
                   id: playlistID,
+                  subtitle: subtitles_url,
                 });
               });
 

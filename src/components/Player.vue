@@ -98,7 +98,7 @@ export default {
           log: this.logs,
           hlsdebug: this.hlsDebug,
           file: this.files,
-          preload: 1,
+          // preload: 1,
           // nativenotios: 1,
           // nativenotipad: 1,
 
@@ -130,6 +130,7 @@ export default {
         }
 
         this.player = new Playerjs(playerOptions);
+        window.player = this.player;
         document.getElementById("player").addEventListener("time", this.playerTimeEvent);
       })();
     },
